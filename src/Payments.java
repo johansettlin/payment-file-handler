@@ -1,3 +1,5 @@
+package src;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -5,7 +7,7 @@ import java.util.List;
 /* super class to all payment files*/
 abstract class Payments {
 
-    private class Section {
+     class Section {
         int startIndex;
         int endIndex;
 
@@ -15,13 +17,19 @@ abstract class Payments {
         }
     }
 
-    private class PaymentBundle {
+    class PaymentBundle {
         String accountNumber;
         Date paymentDate;
         String currency;
+
+        PaymentBundle(String accountNumber, Date paymentDate, String currency){
+            this.accountNumber = accountNumber;
+            this.paymentDate = paymentDate;
+            this.currency = currency;
+        }
     }
 
-    private class Payment {
+    class Payment {
         BigDecimal amount;
         String ref;
 
@@ -30,22 +38,50 @@ abstract class Payments {
             this.ref = ref;
         }
     }
-
+    PaymentBundle pb;
+    // All the payments in the file
     List<Payment> payments;
 
-    public void initPayment(List<String> fileData){
+    PaymentReceiverHandler paymentHandler;
+
+    public void initPayment(List<String> fileData) throws Exception {
         readLines(fileData);
-        startPaymentBundle();
+        startPayment();
     }
 
-    private void startPaymentBundle() {
-        //gå igenom varje payment och kalla på interface
+    // adds a payment to the payment bundle
+    public void addPayment(BigDecimal amount, String ref){
+        payments.add(new Payment(amount,ref));
     }
 
+    // Setter to set a section in a child class
+    public Section setSection(int startIndex, int endIndex){
+        return new Section(startIndex, endIndex);
+    }
+
+    //Getter to fetch the specific section from a string
     public String getSection(Section section, String line){
         return line.substring(section.startIndex, section.endIndex);
     }
-    //specific to each filetype
-    abstract void readLines(List<String> fileData);
+    // Starts a payment bundle and executes calls to the supplied interface with this payment bundle
+    private void startPayment() {
+        paymentHandler = new PaymentReceiverHandler();
+        paymentHandler.startPaymentBundle(pb.accountNumber, pb.paymentDate, pb.currency);
+
+        for (Payment p : payments) {
+            paymentHandler.payment(p.amount, p.ref);
+        }
+    }
+
+    public Date toDate(String date){
+        return new Date(date);
+    }
+
+    public BigDecimal toBigDecimal(String amount){
+        return new BigDecimal(amount);
+    }
+
+    //specific to each filetype/ child class
+    abstract void readLines(List<String> fileData) throws Exception;
 
 }
