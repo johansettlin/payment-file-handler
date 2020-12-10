@@ -1,6 +1,9 @@
 package src;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +64,7 @@ abstract class Payments {
 
     //Getter to fetch the specific section from a string
     public String getSection(Section section, String line){
-        return line.substring(section.startIndex, section.endIndex);
+        return line.substring(section.startIndex, section.endIndex).trim();
     }
     // Starts a payment bundle and executes calls to the supplied interface with this payment bundle
     private void startPayment() {
@@ -73,8 +76,9 @@ abstract class Payments {
         }
     }
 
-    public Date toDate(String date){
-        return new Date(date);
+    public Date toDate(String sDate) throws ParseException {
+        DateFormat format = new SimpleDateFormat("yyyyMMdd");
+        return format.parse(sDate);
     }
 
     public BigDecimal toBigDecimal(String amount){

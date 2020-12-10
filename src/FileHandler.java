@@ -16,7 +16,7 @@ public class FileHandler {
     }
     
     // main file handler, this is where the api decide on what to do with the file type
-    public void handleFile(String path) throws FileNotFoundException {
+    public void handleFile(String path) throws Exception {
         String extensions = getExtension(path);
 
         // Check if extension is supported
@@ -26,7 +26,8 @@ public class FileHandler {
             switch (extensions){
                 //Payments
                 case "_betalningsservice.txt":
-                    System.out.println(extensions);//new Betalservice.initPayement(fileData);
+                   Betalningsservice bet = new Betalningsservice();
+                   bet.initPayment(fileData);
                     break;
                 case "_inbetalningstjansten.txt":
                     System.out.println(extensions);//new inbetalningsTjanst().initPayment(fileData);

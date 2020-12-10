@@ -3,7 +3,9 @@ package src;
 import java.util.List;
 
 public class Betalningsservice extends Payments{
-    //Sections
+    /* SECTIONS */
+
+    /*Posts */
     Section post;
     String openingPost = "O"; // from the description of the file type
     String paymentPost = "B"; // from the description of the file type
@@ -22,7 +24,7 @@ public class Betalningsservice extends Payments{
     Section ref;
 
 
-    public Betalningsservice(List<String> fileData){
+    public Betalningsservice(){
         post = setSection(1, 1);
         // set all the sections in the opening post
         accountNumber = setSection(2,16);
@@ -31,6 +33,10 @@ public class Betalningsservice extends Payments{
         //testing in opening post
         totalAmount = setSection(17,30);
         numberOfPayments = setSection(31,40);
+
+        //Set all the sections for a payment
+        amount = setSection(2,15);
+        ref = setSection(16,50);
 
     }
     @Override
@@ -47,15 +53,20 @@ public class Betalningsservice extends Payments{
 
             // if the current line is the opening post set the payment bundle
             if(getSection(post, line).equals(openingPost)){
-                paymentsInOpening = Integer.parseInt(getSection(totalAmount, line));
-                amountInOpening = Double.parseDouble(getSection(totalAmount, line));
+                paymentsInOpening = Integer.parseInt(getSection(numberOfPayments, line));
+                //amountInOpening = Double.parseDouble(getSection(totalAmount, line));
+                System.out.println(getSection(numberOfPayments, line));
+                System.out.println(getSection(accountNumber, line));
+                System.out.println(getSection(paymentDate, line));
+                System.out.println(getSection(currency, line));
 
                 pb = new PaymentBundle(getSection(accountNumber, line), toDate(getSection(paymentDate, line)), getSection(currency, line));
             // else if the current line is a payment post add a new payment
             }else if(getSection(post, line).equals(paymentPost)){
-                actuallPaymentPosts ++;
-                actuallAmount += Double.parseDouble(getSection(amount, line));
-
+                //actuallPaymentPosts ++;
+                //actuallAmount += Double.parseDouble(getSection(amount, line));
+                System.out.println("-----");
+                System.out.println(getSection(amount, line));
                 addPayment(toBigDecimal(getSection(amount, line)), getSection(ref, line));
             //A post that does not exists
             }else throw new Exception("Post type not supported!");
