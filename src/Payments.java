@@ -4,12 +4,13 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /* super class to all payment files*/
 abstract class Payments {
-
+    // might want to move out because it would probably be used by different types of files a swell
      class Section {
         int startIndex;
         int endIndex;
@@ -47,6 +48,10 @@ abstract class Payments {
 
     PaymentReceiverHandler paymentHandler;
 
+    public Payments(){
+        payments = new ArrayList<Payment>();
+    }
+
     public void initPayment(List<String> fileData) throws Exception {
         readLines(fileData);
         startPayment();
@@ -74,6 +79,8 @@ abstract class Payments {
         for (Payment p : payments) {
             paymentHandler.payment(p.amount, p.ref);
         }
+
+        paymentHandler.endPaymentBundle();
     }
 
     public Date toDate(String sDate) throws ParseException {
@@ -82,7 +89,8 @@ abstract class Payments {
     }
 
     public BigDecimal toBigDecimal(String amount){
-        return new BigDecimal(amount);
+        String formatedAmount = amount.replace(",", ".");
+        return new BigDecimal(formatedAmount);
     }
 
     //specific to each filetype/ child class

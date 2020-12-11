@@ -54,7 +54,8 @@ public class Betalningsservice extends Payments{
             // if the current line is the opening post set the payment bundle
             if(getSection(post, line).equals(openingPost)){
                 paymentsInOpening = Integer.parseInt(getSection(numberOfPayments, line));
-                //amountInOpening = Double.parseDouble(getSection(totalAmount, line));
+                amountInOpening = Double.parseDouble(getSection(totalAmount, line).replace(",", "."));
+                System.out.println("amount in opening: " + amountInOpening );
                 System.out.println(getSection(numberOfPayments, line));
                 System.out.println(getSection(accountNumber, line));
                 System.out.println(getSection(paymentDate, line));
@@ -63,14 +64,15 @@ public class Betalningsservice extends Payments{
                 pb = new PaymentBundle(getSection(accountNumber, line), toDate(getSection(paymentDate, line)), getSection(currency, line));
             // else if the current line is a payment post add a new payment
             }else if(getSection(post, line).equals(paymentPost)){
-                //actuallPaymentPosts ++;
-                //actuallAmount += Double.parseDouble(getSection(amount, line));
-                System.out.println("-----");
-                System.out.println(getSection(amount, line));
+                actuallPaymentPosts ++;
+                actuallAmount += Double.parseDouble(getSection(amount, line).replace(",", "."));
+
                 addPayment(toBigDecimal(getSection(amount, line)), getSection(ref, line));
             //A post that does not exists
             }else throw new Exception("Post type not supported!");
         }
+        System.out.println(actuallAmount + " ----- "
+        );
         // Check that the opening post is telling the truth and exists
         if((paymentsInOpening != actuallPaymentPosts) && (paymentsInOpening != 0)) throw new Exception("Number of payments does not add up!");
         if((amountInOpening != actuallAmount) && (actuallAmount != 0)) throw new Exception("The amount is not adding up!");
