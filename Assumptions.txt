@@ -1,3 +1,5 @@
 1. I assume that there will be no underscores in the extension of the filename for example: _inbetalnings_tjansten.txt and betalnings_service.txt
 
 2. I do not need to store data about the payments that is not necessary for the interface provided.
+
+3. In the file type inbetalningtjansten.txt there is no date specified. I assume that the date is not needed for this filetype and set the date to null.

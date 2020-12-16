@@ -2,6 +2,10 @@ package src;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -12,25 +16,26 @@ public class FileHandler {
     public FileHandler(){
         supportedExtensions = new ArrayList<String>();
         supportedExtensions.add("_betalningsservice.txt");
-        supportedExtensions.add("_inbetalningstjanst.txt"); // wrong name for now
+        supportedExtensions.add("_inbetalningstjansten.txt"); // wrong name for now
     }
     
     // main file handler, this is where the api decide on what to do with the file type
     public void handleFile(String path) throws Exception {
         String extensions = getExtension(path);
 
-        // Check if extension is supported
+        // Check if extension is supported in the file handler
         if(supportedExtensions.contains(extensions)){
             //Read the data content of the file
             List<String> fileData = readFile(path);
             switch (extensions){
                 //Payments
                 case "_betalningsservice.txt":
-                   Betalningsservice bet = new Betalningsservice();
+                   Payments bet = new Betalningsservice();
                    bet.initPayment(fileData);
-                    break;
+                   break;
                 case "_inbetalningstjansten.txt":
-                    System.out.println(extensions);//new inbetalningsTjanst().initPayment(fileData);
+                    Payments bet1 = new Inbetalningstjansten();
+                    bet1.initPayment(fileData);
                     break;
                 //Here we could extend for other filetypes such as Change of person data.
             }
@@ -41,12 +46,8 @@ public class FileHandler {
     private List<String> readFile(String path) {
         List<String> fileData = new ArrayList<>();
         try {
-            File file = new File(path);
-            Scanner reader = new Scanner(file);
-            while (reader.hasNextLine()) {
-                  fileData.add(reader.nextLine());
-            }
-            reader.close();
+            Path translatePath = Paths.get(path);
+            fileData = Files.readAllLines(translatePath, StandardCharsets.ISO_8859_1);
             return fileData;
         } catch (Exception e) {
             System.out.println("An error occurred when reading file, please try again.");
